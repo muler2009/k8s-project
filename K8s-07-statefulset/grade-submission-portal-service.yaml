@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: grade-submission-portal-service
+  namespace: grade-submission
+spec:
+  type: NodePort
+  selector:  # is used to query the pod inorder to know where to forward the traffic
+    app.kubernetes.io/instance: grade-submission-portal
+  ports:
+  - port: 5001  # The port exposed by the Service
+    targetPort: 5001 # The port on the Pod/container where the application is actually listening.
+    # A NodePort exposes the Service through a port on every Kubernetes node
+    # which means service exppose this port to outside of internal cluster  http://grade-submission-portal-service:32000
+    nodePort: 32000   

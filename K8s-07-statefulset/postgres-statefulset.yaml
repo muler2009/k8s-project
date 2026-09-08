@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgresdb
+  namespace: grade-submission
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: postgresdb
+  serviceName: postgresdb
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: grade-sumbission
+        app.kubernetes.io/component: database
+        app.kubernetes.io/instance: postgresdb
+    spec:
+      containers:
+      - name: postgresdb
+        image: postgres:16-alpine
+        ports:
+        - containerPort: 5432
+          name: web
+        volumeMounts:
+        - name: www
+          mountPath: /usr/share/nginx/html
+  volumeClaimTemplates:  # this is a template for the persistent volume claim that will be created for each pod in the stateful set
+  - metadata:
+      name: postgresdb-pvc
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi

@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: grade-sumbission-api
+  labels:
+    app.kubernetes.io/name: grade-sumbission
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/instance: grade-sumbission-api
+spec:
+  containers:
+  - name: grade-sumbission-api
+    image: rslim087/kubernetes-course-grade-submission-api:stateless
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "128m"
+      limits:
+        memory: "128Mi"
+    ports:
+      - containerPort: 3000
+  - name: grade-sumbission-api-health-checker
+    image: rslim087/kubernetes-course-grade-submission-api-health-checker
+    # When we have got the running processs we need to allocate necessary amount of resource for the process to run properly, 
+    # So we need the define the resources via "resources"
+    resources:
+      # requests is used to define the minimuim amount of memeory and cpu required for the application to function properly
+      requests:
+        memory: "128Mi" # this is our workspace computers store and retrive date for processing 
+        cpu: "200m"     # computation performer
+      limits:
+        memory: "128Mi"

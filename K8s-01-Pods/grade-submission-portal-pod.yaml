@@ -1,0 +1,44 @@
+apiVersion: v1
+# What type of object are we are creating?
+kind: Pod  
+# metadata contains information about the Kubernetes object. It does not describe the container itself.
+metadata: 
+  # metadata.name is used ot define the name of the Pod.
+  name: grade-sumbission-portal
+  # metadata.labels - > A label is a key-value pair attached to a Kubernetes object.
+  # Labels are mainly used to identify, organize, and select resources.
+  # app.kubernetes.io is labeling convention in kubernettes
+  labels:
+    app.kubernetes.io/name: grade-sumbission
+    # app.kubernetes.io/component -> used to define the role of the application
+    app.kubernetes.io/component: frontend  
+    # app.kubernetes.io/instance =>  identifies a specific instance or installation of an application.
+    app.kubernetes.io/instance: grade-sumbission-portal
+# Specification/spec a run-time configuration , What should Kubernetes actually run?, what specification for running container in pod
+spec:
+  containers:
+  - name: grade-sumbission-portal
+    image: rslim087/kubernetes-course-grade-submission-portal
+    # When we have got the running processs we need to allocate necessary amount of resource for the process to run properly, 
+    # So we need the define the resources via "resources"
+    resources:
+      # requests is used to define the minimuim amount of memeory and cpu required for the application to function properly
+      requests:
+        memory: "128Mi" # this is our workspace computers store and retrive date for processing 
+        cpu: "200m"     # computation performer
+      limits:
+        memory: "128Mi"
+    ports:
+      - containerPort: 5001
+  - name: grade-sumbission-portal-health-checker
+    image: rslim087/kubernetes-course-grade-submission-portal-health-checker
+    # When we have got the running processs we need to allocate necessary amount of resource for the process to run properly, 
+    # So we need the define the resources via "resources"
+    resources:
+      # requests is used to define the minimuim amount of memeory and cpu required for the application to function properly
+      requests:
+        memory: "128Mi" # this is our workspace computers store and retrive date for processing 
+        cpu: "200m"     # computation performer
+      limits:
+        memory: "128Mi"
+  

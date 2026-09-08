@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grade-submission-portal-deployment
+  namespace: grade-submission
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: grade-submission-portal
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: grade-sumbission
+        # app.kubernetes.io/component -> used to define the role of the application
+        app.kubernetes.io/component: frontend  
+        # app.kubernetes.io/instance =>  identifies a specific instance or installation of an application.
+        app.kubernetes.io/instance: grade-submission-portal
+    # Specification/spec a run-time configuration , What should Kubernetes actually run?, what specification for running container in pod
+    spec:
+      containers:
+      - name: grade-submission-portal
+        image: rslim087/kubernetes-course-grade-submission-portal
+        # When we have got the running processs we need to allocate necessary amount of resource for the process to run properly, 
+        # So we need the define the resources via "resources"
+        env:
+          - name: GRADE_SERVICE_HOST
+            value: grade-submission-api
+        resources:
+          # requests is used to define the minimuim amount of memeory and cpu required for the application to function properly
+          requests:
+            memory: "128Mi" # this is our workspace computers store and retrive date for processing 
+            cpu: "200m"     # computation performer
+          limits:
+            memory: "128Mi"
+        ports:
+          - containerPort: 5001
