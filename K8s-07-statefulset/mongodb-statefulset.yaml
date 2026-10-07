@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb
+  namespace: grade-submission
+spec:
+  selector:
+    matchLabels:  # every pod created by this stateful set will have these labels
+      app.kubernetes.io/instance: mongodb  # every node with this label matched belongs to this statefulset resource 
+  serviceName: mongodb   # A StatefulSet uses a Service to provide stable network identities for its Pods.
+  replicas: 1
+  template: # Pod template. It tells the StatefulSet:When you create my Pods, make them look like this." Think of it as a blueprint:
+    metadata:
+      labels:
+        app.kubernetes.io/name: grade-submission
+        app.kubernetes.io/component: database
+        app.kubernetes.io/instance: mongodb
+    spec:
+      containers: 
+      - name: mongodb
+        image: mongodb/mongodb-enterprise-server:8.0-ubi8-slim
+        env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            value: admin
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            value: "password123"
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongodb-pvc
+          mountPath: /data/db
+  volumeClaimTemplates:  # this is a template for the persistent volume claim that will be created for each pod in the stateful set
+  - metadata:
+      name: mongodb-pvc
+    spec: 
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+
+
+# StatefulSet
+# │
+# ├── postgresdb-0
+# │     │
+# │     └── mongodb-pvc-mongodb-0
+# │
+# └── mongodb-1
+#       │
+#       └── mongodb-pvc-mongodb-1

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grade-submission-portal-deployment   # name of the deployment 
+  namespace: {{ .Values.frontend.namespace}}
+spec:
+  replicas: {{ .Values.frontend.replicas}}
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Values.frontend.name}}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: grade-sumbission
+        app.kubernetes.io/component: frontend   # app.kubernetes.io/component -> used to define the role of the application
+        app.kubernetes.io/instance: {{ .Values.frontend.name}} # app.kubernetes.io/instance =>  identifies a specific instance or installation of an application.
+    spec:  # Specification/spec a run-time configuration , What should Kubernetes actually run?, what specification for running container in pod
+      containers:
+      - name: {{ .Values.frontend.name}}
+        image: {{ .Values.workload.image}}
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.workload.port}}
+          initialDelaySeconds: {{ .Values.workload.livenessDelay}}
+          periodSeconds: {{ .Values.workload.livenessPeriod}}
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: {{ .Values.workload.port}} 
+        envFrom:
+          - configMapRef:
+              name: {{ .Values.frontend.name}}-config
+        # When we have got the running processs we need to allocate necessary amount of resource for the process to run properly, 
+        # So we need the define the resources via "resources"
+        resources:
+          requests: # requests is used to define the minimuim amount of memeory and cpu required for the application to function properly
+            memory: {{ .Values.workload.resources.memory}}
+            cpu: {{ .Values.workload.resources.cpu}}
+          limits:
+            memory: {{ .Values.workload.resources.memory}}
+        ports:
+          - containerPort: {{ .Values.workload.port}}

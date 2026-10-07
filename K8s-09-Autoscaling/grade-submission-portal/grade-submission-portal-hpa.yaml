@@ -1,0 +1,19 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: grade-submission-portal-hpa
+  namespace: grade-submission
+spec:
+  scaleTargetRef: # scaleTargetRef is used to define the target deployment for which we want to enable autoscaling
+    apiVersion: apps/v1
+    kind: Deployment
+    name: grade-submission-portal-deployment
+  minReplicas: 1 # minReplicas is used to define the minimum number of replicas for the deployment
+  maxReplicas: 10 # maxReplicas is used to define the maximum number of replicas for the deployment
+  metrics:  # metrics is used to define the metrics for which we want to enable autoscaling
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50

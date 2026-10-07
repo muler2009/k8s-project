@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grade-submission-portal-config
+  namespace: {{ .Values.frontend.namespace}}
+data:
+  GRADE_SERVICE_HOST: {{ .Values.env.GRADE_SERVICE_HOST}}

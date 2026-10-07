@@ -32,15 +32,11 @@ spec:
             path: /readyz
             port: 3000
           periodSeconds: 5
-        env:
-        - name: MONGODB_HOST
-          value: mongodb-service  # must be the service name of the mongodb service, not the statefulset name
-        - name: MONGODB_PORT
-          value: "27017"
-        - name: MONGODB_USER
-          value: admin
-        - name: MONGODB_PASSWORD
-          value: password123
+        envFrom:
+          - configMapRef:
+              name: grade-submission-api-config
+          - secretRef:
+              name: grade-submission-api-secret
         resources:
           requests:
             memory: "128Mi"

@@ -1,0 +1,12 @@
+useStatefulSet: true
+auth:
+  enabled: false
+
+persistence:
+  enabled: true
+
+extraVolumeMounts:
+  - name: datadir
+    mountPath: /data/db
+
+

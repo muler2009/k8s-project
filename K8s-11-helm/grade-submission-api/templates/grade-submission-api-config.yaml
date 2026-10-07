@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.microservice.name}}-config
+  namespace: {{ .Values.microservice.namespace}}
+data:
+  MONGODB_HOST: {{ .Values.env.MONGODB_HOST }}  # must be the service name of the mongodb service, not the statefulset name
+  MONGODB_PORT: {{ .Values.env.MONGODB_PORT | quote }}  # must be the service port of the mongodb service, not the statefulset port
